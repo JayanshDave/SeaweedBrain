@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Be My Valentine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -25,6 +25,9 @@
                         'oswald': ['Oswald', 'sans-serif'],
                         'mono': ['Roboto Mono', 'monospace'],
                         'cursive': ['Great Vibes', 'cursive'],
+                    },
+                    spacing: {
+                        'safe-bottom': 'env(safe-area-inset-bottom)',
                     }
                 }
             }
@@ -33,7 +36,7 @@
     <style>
         /* Hide scrollbar for clean look */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 4px; /* Thinner on mobile */
         }
         ::-webkit-scrollbar-track {
             background: #1F0A10;
@@ -51,9 +54,10 @@
         /* Smooth scroll behavior */
         html {
             scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent; /* Remove blue tap box on mobile */
         }
         
-        /* Custom noise texture overlay with a red tint */
+        /* Custom noise texture overlay */
         .noise-bg {
             position: fixed;
             top: 0;
@@ -70,14 +74,8 @@
 
         /* Heart Animation Keyframes */
         @keyframes floatUp {
-            0% {
-                transform: translateY(0) scale(0.5) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-110vh) scale(1.5) rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) scale(1.5) rotate(360deg); opacity: 0; }
         }
 
         .floating-heart {
@@ -87,6 +85,34 @@
             animation: floatUp linear forwards;
             text-shadow: 0 0 5px rgba(255, 30, 86, 0.5);
         }
+
+        /* NEW TOAST NOTIFICATION ANIMATION */
+        @keyframes slideInToast {
+            0% { transform: translateX(120%); opacity: 0; }
+            10% { transform: translateX(0); opacity: 1; }
+            90% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(120%); opacity: 0; }
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 110px; /* Positioned just above the footer buttons */
+            right: 20px;
+            z-index: 200;
+            animation: slideInToast 4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            max-width: 85vw;
+        }
+
+        /* Icon Wobble Animation */
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-10deg) scale(1.1); }
+            75% { transform: rotate(10deg) scale(1.1); }
+        }
+
+        .wobble-active {
+            animation: wobble 0.5s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-val-dark text-white font-oswald overflow-x-hidden selection:bg-val-pink selection:text-white">
@@ -95,15 +121,15 @@
     <div class="noise-bg"></div>
 
     <!-- SECTION 1: HERO (Fixed Background Effect) -->
-    <div class="fixed inset-0 w-full h-screen z-0 flex flex-col justify-center items-center pt-safe-top">
+    <div class="fixed inset-0 w-full h-[100dvh] z-0 flex flex-col justify-center items-center">
         
         <!-- Giant Title Background -->
-        <h1 class="font-anton text-[25vw] md:text-[22vw] leading-none tracking-tighter text-val-cream select-none opacity-90 z-0 drop-shadow-[0_0_15px_rgba(255,30,86,0.5)] mt-[-20vh] md:mt-0">
+        <h1 class="font-anton text-[23vw] md:text-[22vw] leading-none tracking-tighter text-val-cream select-none opacity-90 z-0 drop-shadow-[0_0_15px_rgba(255,30,86,0.5)] mt-[-15vh] md:mt-0">
             VALENTINE
         </h1>
 
         <!-- Central Heart SVG -->
-        <div class="absolute bottom-0 z-10 w-[85vw] max-w-lg md:max-w-xl transform translate-y-16 md:translate-y-20 flex justify-center">
+        <div class="absolute bottom-0 z-10 w-[85vw] max-w-lg md:max-w-xl transform translate-y-12 md:translate-y-20 flex justify-center">
              <svg viewBox="0 0 500 500" class="w-full h-auto drop-shadow-2xl filter brightness-110 contrast-125 animate-pulse" style="animation-duration: 3s;">
                 <defs>
                     <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -129,57 +155,55 @@
         </div>
 
         <!-- Floating Badges -->
-        <div class="absolute z-20 flex flex-wrap justify-center gap-3 md:gap-4 top-1/2 left-1/2 transform -translate-x-1/2 translate-y-24 md:translate-y-32 w-full px-4">
+        <div class="absolute z-20 flex flex-wrap justify-center gap-2 md:gap-4 top-1/2 left-1/2 transform -translate-x-1/2 translate-y-20 md:translate-y-32 w-full px-2">
             
-            <!-- Badge 1 -->
+            <!-- Badge 1: Status -->
             <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white text-val-dark flex flex-col items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer border-2 border-val-pink">
                 <span class="text-[8px] md:text-[10px] font-bold uppercase tracking-wide text-val-pink">Status</span>
                 <span class="text-lg md:text-2xl font-anton">TAKEN</span>
             </div>
             
-            <!-- Badge 3: Timer (Widened to Pill Shape) -->
-            <div class="h-16 md:h-24 rounded-full bg-val-pink/80 text-white flex flex-col items-center justify-center shadow-lg hover:scale-105 transition-transform cursor-pointer backdrop-blur-sm px-4 md:px-6 min-w-[160px] md:min-w-[200px]">
-                <!-- Removed "Since Oct 24..." span -->
+            <!-- Badge 2: Timer -->
+            <div class="h-16 md:h-24 rounded-full bg-val-pink/80 text-white flex flex-col items-center justify-center shadow-lg hover:scale-105 transition-transform cursor-pointer backdrop-blur-sm px-4 md:px-6 min-w-[150px] md:min-w-[200px]">
                 <div id="love-timer" class="text-center leading-tight">
-                    <!-- Timer will be injected here -->
                     <span class="text-xs md:text-sm font-mono">Calculating...</span>
                 </div>
             </div>
         </div>
 
         <!-- Side details -->
-        <div class="absolute bottom-6 md:bottom-10 w-full px-6 flex justify-between items-end">
+        <div class="absolute bottom-6 md:bottom-10 w-full px-4 md:px-6 flex justify-between items-end">
             <div class="flex items-center gap-2 md:gap-3">
                 <div class="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-full flex items-center justify-center animate-bounce">
                     <i class="fas fa-heart text-val-pink text-[10px] md:text-xs"></i>
                 </div>
-                <div class="text-[9px] md:text-[10px] max-w-[120px] md:max-w-[150px] leading-tight text-white/60">
+                <div class="text-[9px] md:text-[10px] max-w-[100px] md:max-w-[150px] leading-tight text-white/60">
                     CUPID APPROVED<br>HIGH ROMANCE
                 </div>
             </div>
 
-            <div class="text-[9px] md:text-[10px] max-w-[160px] md:max-w-[260px] leading-tight text-white/80 font-mono text-right">
+            <div class="text-[9px] md:text-[10px] max-w-[140px] md:max-w-[260px] leading-tight text-white/80 font-mono text-right">
                 "YOU MUST ALLOW ME TO TELL YOU HOW ARDENTLY I ADMIRE AND LOVE YOU."<br>
             </div>
         </div>
     </div>
 
     <!-- Spacer -->
-    <div class="h-[90vh]"></div>
+    <div class="h-[85vh] md:h-[90vh]"></div>
 
     <!-- SECTION 2: SCROLL REVEAL CONTENT -->
-    <div class="relative z-10 bg-val-cream text-val-dark w-full rounded-t-[2.5rem] md:rounded-t-[4rem] px-5 md:px-10 pb-20 shadow-[0_-20px_60px_rgba(255,30,86,0.3)] mt-10">
+    <div class="relative z-10 bg-val-cream text-val-dark w-full rounded-t-[2rem] md:rounded-t-[4rem] px-4 md:px-10 pb-20 shadow-[0_-20px_60px_rgba(255,30,86,0.3)] mt-10">
         
         <!-- Header of Section -->
-        <div class="pt-12 md:pt-16 pb-8 md:pb-10 border-b border-val-pink/20">
+        <div class="pt-10 md:pt-16 pb-6 md:pb-10 border-b border-val-pink/20">
             <div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-4 md:gap-6">
                 <div class="flex-1 w-full">
-                    <h2 class="text-[15vw] md:text-9xl font-anton uppercase leading-none tracking-tight text-val-dark break-words w-full">
+                    <h2 class="text-[17vw] md:text-9xl font-anton uppercase leading-none tracking-tight text-val-dark break-words w-full">
                         I <span class="text-transparent stroke-val-pink text-outline" style="-webkit-text-stroke: 1px #FF1E56;">LOVE</span> YOU
                     </h2>
                     <p class="mt-2 md:mt-4 font-mono text-[10px] md:text-xs text-val-pink tracking-widest uppercase">And your "Candy ass hero shit"</p>
                 </div>
-                <div class="md:text-right max-w-sm mt-4 md:mt-0">
+                <div class="md:text-right max-w-sm mt-2 md:mt-0">
                     <p class="text-xs md:text-sm font-medium leading-relaxed text-gray-600">
                         I hope you like this little gift I prepared for you.
                     </p>
@@ -188,9 +212,10 @@
         </div>
 
         <!-- NEW NOTE SECTION -->
-        <div class="mt-8 md:mt-10 max-w-3xl">
+        <div class="mt-6 md:mt-10 max-w-3xl">
             <p class="font-cursive text-2xl md:text-3xl text-val-pink mb-3 md:mb-4">My Love,</p>
-            <p class="font-mono text-xs md:text-base leading-relaxed text-gray-700 bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-val-pink/10">
+            <!-- Increased font size for mobile readability -->
+            <p class="font-mono text-sm md:text-base leading-relaxed text-gray-700 bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-val-pink/10">
                 For the past 2 years, 3 months & 22 days I have been the happiest man on Earth and that is all beause of you. I came to college thinking that I will no longer make any decison that I may regret later but I never thought that some of my decisions will lead to having such an amazing partner. You are not just a girlfriend. You are my partner. You are my hope & love.
                 And I love the word "partner". Just makes us feel like a unit, a group. You said recently that I am too lost in you and I agree that I am too attached. I like to think that I love you in a way that would make a therapist worried but a poet thrilled! 
                 Whatever the date be, whenever we may celebrate the valentines. Dates dont matter what matters is our love and our being there for each other. Our putting in the collective effort and our faith & trust in each other. I trust you with my life, my soul and my every lifetime. 
@@ -200,110 +225,107 @@
         </div>
 
         <!-- Song Recommendations List -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mt-8 md:mt-12 w-full max-w-5xl mx-auto">
+        <!-- Added safe-bottom padding for iPhones -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mt-8 md:mt-12 w-full max-w-5xl mx-auto pb-safe-bottom">
             <!-- Song Item 1 -->
-            <a href="https://music.youtube.com/watch?v=ORrFJ63nlcA&si=p8hK2jzg2J4MuTpp" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10">
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
+            <a href="https://music.youtube.com/watch?v=ORrFJ63nlcA&si=p8hK2jzg2J4MuTpp" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10 tap-highlight-transparent">
+                <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
+                    <div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
                         <i class="fas fa-music text-sm md:text-base"></i>
                     </div>
-                    <div>
-                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none">Perfect</h4>
-                        <p class="font-mono text-[10px] md:text-xs opacity-60">Ed Sheeran</p>
-                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60">Because this will always be a special song</p>
+                    <div class="min-w-0">
+                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none truncate">Perfect</h4>
+                        <p class="font-mono text-[10px] md:text-xs opacity-60 truncate">Ed Sheeran</p>
+                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60 truncate">Because this will always be a special song</p>
                     </div>
                 </div>
-                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
+                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
                     <i class="fas fa-play text-[10px] md:text-xs"></i>
                 </div>
             </a>
             <!-- Song Item 2 -->
-            <a href="https://music.youtube.com/watch?v=eVNNfmr_vWI&si=nCVwH74mTqHRiXz8" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10">
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
+            <a href="https://music.youtube.com/watch?v=eVNNfmr_vWI&si=nCVwH74mTqHRiXz8" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10 tap-highlight-transparent">
+                <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
+                    <div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
                         <i class="fas fa-music text-sm md:text-base"></i>
                     </div>
-                    <div>
-                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none">Fearless (Taylor's Version)</h4>
-                        <p class="font-mono text-[10px] md:text-xs opacity-60">Taylor Swift</p>
-                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60">There was a time when I used to imagine this is what love would feel like.</p>
+                    <div class="min-w-0">
+                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none truncate">Fearless (TV)</h4>
+                        <p class="font-mono text-[10px] md:text-xs opacity-60 truncate">Taylor Swift</p>
+                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60 truncate">Imagining what love would feel like.</p>
                     </div>
                 </div>
-                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
+                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
                     <i class="fas fa-play text-[10px] md:text-xs"></i>
                 </div>
             </a>
             <!-- Song Item 3 -->
-            <a href="https://music.youtube.com/watch?v=GGsuLVlLObc&si=e6q-Je6wSB-1nBzl" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10">
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
+            <a href="https://music.youtube.com/watch?v=GGsuLVlLObc&si=e6q-Je6wSB-1nBzl" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10 tap-highlight-transparent">
+                <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
+                    <div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
                         <i class="fas fa-music text-sm md:text-base"></i>
                     </div>
-                    <div>
-                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none truncate max-w-[150px] md:max-w-none">Shut Up & Dance</h4>
-                        <p class="font-mono text-[10px] md:text-xs opacity-60">Walk The Moon</p>
-                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60">How life feels with you.</p>
+                    <div class="min-w-0">
+                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none truncate">Shut Up & Dance</h4>
+                        <p class="font-mono text-[10px] md:text-xs opacity-60 truncate">Walk The Moon</p>
+                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60 truncate">How life feels with you.</p>
                     </div>
                 </div>
-                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
+                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
                     <i class="fas fa-play text-[10px] md:text-xs"></i>
                 </div>
             </a>
             <!-- Song Item 4 -->
-            <a href="https://music.youtube.com/watch?v=MsSIVZlqC9w&si=KRrnfiEEf8dYlrVc" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10">
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
+            <a href="https://music.youtube.com/watch?v=MsSIVZlqC9w&si=KRrnfiEEf8dYlrVc" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10 tap-highlight-transparent">
+                <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
+                    <div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
                         <i class="fas fa-music text-sm md:text-base"></i>
                     </div>
-                    <div>
-                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none truncate max-w-[150px] md:max-w-none">I Like Me Better</h4>
-                        <p class="font-mono text-[10px] md:text-xs opacity-60">Lauv</p>
-                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60">You have rewired my brain chemistry!</p>
+                    <div class="min-w-0">
+                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none truncate">I Like Me Better</h4>
+                        <p class="font-mono text-[10px] md:text-xs opacity-60 truncate">Lauv</p>
+                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60 truncate">You rewired my brain chemistry!</p>
                     </div>
                 </div>
-                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
+                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
                     <i class="fas fa-play text-[10px] md:text-xs"></i>
                 </div>
             </a>
             <!-- Song Item 5 -->
-            <a href="https://music.youtube.com/watch?v=uLL2xTK35Qc&si=VpPior2LQBg4e3k8" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10">
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
+            <a href="https://music.youtube.com/watch?v=uLL2xTK35Qc&si=VpPior2LQBg4e3k8" target="_blank" class="group flex items-center justify-between bg-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-md active:scale-95 transition-all duration-300 border-2 border-transparent border-val-pink/10 tap-highlight-transparent">
+                <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
+                    <div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-val-pink/10 flex items-center justify-center text-val-pink">
                         <i class="fas fa-music text-sm md:text-base"></i>
                     </div>
-                    <div>
-                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none">Lover</h4>
-                        <p class="font-mono text-[10px] md:text-xs opacity-60">Taylor Swift</p>
-                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60">I will always be your LOVERRRRRRR</p>
+                    <div class="min-w-0">
+                        <h4 class="font-anton text-lg md:text-xl uppercase leading-none truncate">Lover</h4>
+                        <p class="font-mono text-[10px] md:text-xs opacity-60 truncate">Taylor Swift</p>
+                        <p class="font-mono text-[10px] md:text-xs val-pink opacity-60 truncate">I will always be your LOVERRRRRRR</p>
                     </div>
                 </div>
-                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
+                <div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full border border-current flex items-center justify-center text-val-pink">
                     <i class="fas fa-play text-[10px] md:text-xs"></i>
                 </div>
             </a>
         </div>
 
         <!-- Footer -->
-        <div class="mt-12 md:mt-20 border-t border-val-pink/20 pt-8 md:pt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+        <div class="mt-12 md:mt-20 border-t border-val-pink/20 pt-8 md:pt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 pb-10">
             <h2 class="font-anton text-3xl md:text-4xl text-val-pink">BE MINE?</h2>
+            <!-- Footer Buttons -->
             <div class="flex gap-4">
-                <a href="#" id="heart-trigger" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors active:scale-90"><i class="fas fa-heart"></i></a>
-                <a href="#" id="gift-trigger" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors active:scale-90"><i class="fas fa-gift"></i></a>
-                <a href="#" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors"><i class="fas fa-envelope"></i></a>
+                <a href="#" id="heart-trigger" class="w-14 h-14 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors active:scale-90 bg-white shadow-sm touch-manipulation">
+                    <i class="fas fa-heart text-2xl"></i>
+                </a>
+                <a href="#" id="gift-trigger" class="w-14 h-14 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors bg-white shadow-sm touch-manipulation">
+                    <i class="fas fa-gift text-2xl"></i>
+                </a>
             </div>
         </div>
 
     </div>
 
-    <!-- Hidden Message Modal -->
-    <div id="gift-modal" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-backdrop"></div>
-        <div class="bg-white text-val-dark p-8 rounded-3xl max-w-xs text-center transform scale-90 transition-transform duration-300 shadow-2xl border-4 border-val-pink relative mx-4">
-            <i class="fas fa-gift text-4xl text-val-pink mb-4 animate-bounce"></i>
-            <p id="gift-message" class="font-anton text-2xl uppercase leading-tight">You are cute!</p>
-            <p class="text-xs text-gray-500 mt-4 font-mono">Tap anywhere to close</p>
-        </div>
-    </div>
+    <!-- Removed the #gift-modal structure completely -->
 
     <script>
         // --- TIMER LOGIC ---
@@ -312,7 +334,6 @@
             const now = new Date();
             let diff = now - startDate;
 
-            // Calculations
             const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
             diff -= years * (1000 * 60 * 60 * 24 * 365.25);
 
@@ -330,10 +351,8 @@
 
             const seconds = Math.floor(diff / 1000);
 
-            // Update HTML
             const timerEl = document.getElementById('love-timer');
             if (timerEl) {
-                // Formatting: 2Y 4M 12D (Line Break) 10:20:30
                 timerEl.innerHTML = `
                     <div class="font-anton text-base md:text-xl tracking-wide text-white">
                         ${years}Y ${months}M ${days}D
@@ -346,7 +365,7 @@
         }
 
         setInterval(updateTimer, 1000);
-        updateTimer(); // Run immediately
+        updateTimer(); 
 
         // --- HEART EXPLOSION ANIMATION ---
         document.getElementById('heart-trigger').addEventListener('click', function(e) {
@@ -356,39 +375,32 @@
 
         function createHearts() {
             const container = document.body;
-            // Create 50 hearts
-            for(let i=0; i<50; i++) {
+            for(let i=0; i<30; i++) { // Reduced count for mobile performance
                 const heart = document.createElement('i');
                 heart.classList.add('fas', 'fa-heart', 'floating-heart');
-                heart.style.color = '#FF1E56'; // Ensure color matches theme
+                heart.style.color = '#FF1E56'; 
                 
-                // Randomize position across the full width
                 heart.style.left = Math.random() * 100 + 'vw';
-                // Start slightly below view
                 heart.style.bottom = '-50px';
                 
-                // Random size variation
                 const size = Math.random() * 20 + 10 + 'px';
                 heart.style.fontSize = size;
                 
-                // Randomize speed and float distance slightly via duration
                 const duration = Math.random() * 3 + 3 + 's';
                 heart.style.animationDuration = duration;
                 
-                // Stagger start times slightly
                 heart.style.animationDelay = Math.random() * 0.5 + 's';
                 
                 container.appendChild(heart);
                 
-                // Cleanup after animation ends
                 setTimeout(() => {
                     heart.remove();
                 }, parseFloat(duration) * 1000);
             }
         }
 
-        // --- GIFT MODAL LOGIC ---
-        const giftMessages = [
+        // --- NEW GIFT LOGIC (NO REPEATS) ---
+        const allGiftMessages = [
             "You are cute!",
             "Hey Beautiful!",
             "I like my coffee same colour as your eyes",
@@ -410,31 +422,49 @@
             "P.S. I love you"
         ];
 
-        const giftTrigger = document.getElementById('gift-trigger');
-        const giftModal = document.getElementById('gift-modal');
-        const giftMessage = document.getElementById('gift-message');
+        let availableMessages = [...allGiftMessages];
 
-        function openGift() {
-            const randomMsg = giftMessages[Math.floor(Math.random() * giftMessages.length)];
-            giftMessage.textContent = randomMsg;
-            giftModal.classList.remove('opacity-0', 'pointer-events-none');
-            giftModal.querySelector('div.bg-white').classList.remove('scale-90');
-            giftModal.querySelector('div.bg-white').classList.add('scale-100');
+        const giftTrigger = document.getElementById('gift-trigger');
+
+        function getUniqueMessage() {
+            if (availableMessages.length === 0) {
+                availableMessages = [...allGiftMessages];
+            }
+            const randomIndex = Math.floor(Math.random() * availableMessages.length);
+            const message = availableMessages[randomIndex];
+            availableMessages.splice(randomIndex, 1);
+            return message;
         }
 
-        function closeGift() {
-            giftModal.classList.add('opacity-0', 'pointer-events-none');
-            giftModal.querySelector('div.bg-white').classList.add('scale-90');
-            giftModal.querySelector('div.bg-white').classList.remove('scale-100');
+        function showFloatingQuote() {
+            // Add wobble animation to button
+            giftTrigger.classList.add('wobble-active');
+            setTimeout(() => {
+                giftTrigger.classList.remove('wobble-active');
+            }, 500);
+
+            // Create notification element (Toast style)
+            const quoteEl = document.createElement('div');
+            // Tailwind classes: bg-white, text-dark, padding, rounded, shadow, left border pink, flex alignment
+            quoteEl.className = 'toast-notification bg-white text-val-dark px-5 py-3 rounded-xl shadow-2xl border-l-4 border-val-pink flex items-center gap-3 pointer-events-none';
+            
+            quoteEl.innerHTML = `
+                <i class="fas fa-heart text-val-pink animate-pulse"></i>
+                <span class="font-anton uppercase text-lg leading-tight tracking-wide">${getUniqueMessage()}</span>
+            `;
+            
+            document.body.appendChild(quoteEl);
+
+            // Cleanup
+            setTimeout(() => {
+                quoteEl.remove();
+            }, 4000); // Matches CSS animation duration
         }
 
         giftTrigger.addEventListener('click', (e) => {
             e.preventDefault();
-            openGift();
+            showFloatingQuote();
         });
-
-        // Close when clicking anywhere on the modal
-        giftModal.addEventListener('click', closeGift);
 
         // --- SCROLL ANIMATIONS ---
         const observer = new IntersectionObserver((entries) => {
@@ -444,7 +474,7 @@
                     entry.target.classList.remove('opacity-0', 'translate-y-10');
                 }
             });
-        });
+        }, { threshold: 0.1 }); 
 
         document.querySelectorAll('.grid > a').forEach((el, index) => {
             el.classList.add('transition-all', 'duration-700', 'ease-out', 'opacity-0', 'translate-y-10');
