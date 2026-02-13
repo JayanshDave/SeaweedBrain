@@ -3,123 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SeaweedBrain | Home</title>
+    <title>Protocol: V-Day</title>
     <style>
-        /* --- CSS STYLES --- */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* --- RESET & BASICS --- */
+        * {
             margin: 0;
             padding: 0;
-            color: #333;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #111;
+            --text-primary: #eee;
+            --accent-glow: #ff0055; /* Neon Pink/Red */
+            --accent-secondary: #00f3ff; /* Cyan for contrast */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Courier New', Courier, monospace; /* Tech/Hacker vibe */
+            overflow-x: hidden; /* Prevent horizontal scrollbar from animations */
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2 {
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+        }
+
+        p {
             line-height: 1.6;
+            color: #aaa;
+            font-size: 1.1rem;
         }
 
-        /* Navigation Bar */
-        nav {
-            background-color: #333;
-            color: white;
-            padding: 1rem;
-            position: sticky; /* Keeps nav at top when scrolling */
-            top: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .logo {
-            font-weight: bold;
-            font-size: 1.5rem;
-            padding-left: 20px;
-        }
-
-        .nav-links {
-            list-style: none;
-            padding-right: 20px;
-        }
-
-        .nav-links li {
-            display: inline;
-            margin-left: 20px;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .nav-links a:hover {
-            color: #ffcc00; /* Yellow on hover */
-        }
-
-        /* Hero Section (The Big Intro) */
+        /* --- HERO SECTION (BANNER) --- */
         .hero {
-            background-color: #e0e0e0;
-            height: 60vh; /* 60% of screen height */
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
+            background: radial-gradient(circle at center, #1a050d 0%, var(--bg-color) 70%);
+            position: relative;
         }
 
         .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
+            font-size: 5rem;
+            color: #fff;
+            text-shadow: 
+                0 0 10px var(--accent-glow),
+                0 0 20px var(--accent-glow),
+                0 0 40px var(--accent-glow),
+                0 0 80px var(--accent-glow);
+            animation: pulse 2s infinite alternate;
         }
 
-        /* Main Content */
+        .hero p {
+            margin-top: 1rem;
+            color: var(--accent-secondary);
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            animation: bounce 2s infinite;
+            opacity: 0.5;
+        }
+
+        /* --- SECTIONS --- */
+        section.content-section {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
         .container {
-            max-width: 800px;
-            margin: 40px auto; /* Centers the box */
-            padding: 0 20px;
+            max-width: 1000px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 4rem;
+            border: 1px solid #333;
+            border-left: 5px solid var(--accent-secondary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 50px;
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 48%, rgba(255, 0, 85, 0.1) 50%, transparent 52%);
+            background-size: 200% 200%;
+            animation: sheen 3s infinite linear;
+            pointer-events: none;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #333;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse {
+            from { text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow); }
+            to { text-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow), 0 0 60px var(--accent-glow); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        @keyframes sheen {
+            0% { background-position: 200% 50%; }
+            100% { background-position: -200% 50%; }
+        }
+
+        /* --- SCROLL REVEAL CLASSES --- */
+        .hidden {
+            opacity: 0;
+            filter: blur(5px);
+            transition: all 1s ease-out;
+        }
+
+        /* Slide from Left */
+        .hidden-left {
+            transform: translateX(-100px);
+        }
+
+        /* Slide from Right */
+        .hidden-right {
+            transform: translateX(100px);
+        }
+
+        /* Slide Up */
+        .hidden-up {
+            transform: translateY(100px);
+        }
+
+        .show {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateX(0) translateY(0);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .container { padding: 2rem; }
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">SeaweedBrain</div>
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </nav>
+    <section class="hero">
+        <h1>Happy Valentines Day</h1>
+        <p>SYSTEM STATUS: INFATUATED</p>
+        <div class="scroll-indicator">↓ SCROLL TO DECRYPT ↓</div>
+    </section>
 
-    <div class="hero">
-        <h1>Welcome to My Site</h1>
-        <p>This is a professional-style layout hosted for free.</p>
-    </div>
+    <section class="content-section">
+        <div class="container hidden hidden-left">
+            <h2 class="section-title">01. The Origin</h2>
+            <p>
+                Every great story starts with a spark. Whether it's the first line of code or the first time our eyes met, 
+                everything changed in a nanosecond. The static noise of the universe faded away, leaving only a clear signal.
+            </p>
+        </div>
+    </section>
 
-    <div class="container">
-        <h2>About This Project</h2>
-        <p>
-            This website is hosted on GitHub Pages. You can edit the text in the 
-            <code>index.html</code> file to say whatever you want. Because the file is named index, 
-            you don't need to type the filename in the URL.
-        </p>
-        <br>
-        <h3>How it Works</h3>
-        <p>
-            The navigation bar above is "sticky," meaning it stays at the top even if you add 
-            lots of text here and scroll down.
-        </p>
-    </div>
+    <section class="content-section">
+        <div class="container hidden hidden-right">
+            <h2 class="section-title">02. The Variable</h2>
+            <p>
+                In a world of constants, you are the variable that makes the equation work. 
+                Logic dictates one path, but emotion overrides the kernel. 
+                This section represents the chaos and beauty of the unpredictable.
+            </p>
+        </div>
+    </section>
 
-    <footer>
-        <p>&copy; 2026 Jayansh Dave. Built on GitHub.</p>
-    </footer>
+    <section class="content-section">
+        <div class="container hidden hidden-up">
+            <h2 class="section-title">03. The Connection</h2>
+            <p>
+                Latency: 0ms. Packet loss: 0%. <br>
+                The connection is stable and encrypted. 
+                We are building something that scales, something that endures through every version update and deprecated library.
+            </p>
+        </div>
+    </section>
 
+    <section class="content-section">
+        <div class="container hidden hidden-left" style="border-left-color: var(--accent-glow);">
+            <h2 class="section-title">04. Execution</h2>
+            <p>
+                The plan is simple: Keep running. No breakpoints. No exit loops. 
+                Just an infinite while-loop of awesome. 
+                <br><br>
+                <strong>> End of Line.</strong>
+            </p>
+        </div>
+    </section>
+
+    <script>
+        // --- THE BRAINS (Intersection Observer) ---
+        
+        // 1. Select all elements with the 'hidden' class
+        const hiddenElements = document.querySelectorAll('.hidden');
+
+        // 2. Create the observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                console.log(entry) // Debugging
+                if (entry.isIntersecting) {
+                    // Add the 'show' class when element enters viewport
+                    entry.target.classList.add('show');
+                } else {
+                    // Optional: Remove 'show' if you want it to re-animate every time
+                    // entry.target.classList.remove('show'); 
+                }
+            });
+        });
+
+        // 3. Tell observer to watch all hidden elements
+        hiddenElements.forEach((el) => observer.observe(el));
+    </script>
 </body>
 </html>
