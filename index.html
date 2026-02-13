@@ -67,6 +67,26 @@
             background-color: #590018; 
             mix-blend-mode: overlay;
         }
+
+        /* Heart Animation Keyframes */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.5) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-110vh) scale(1.5) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            animation: floatUp linear forwards;
+            text-shadow: 0 0 5px rgba(255, 30, 86, 0.5);
+        }
     </style>
 </head>
 <body class="bg-val-dark text-white font-oswald overflow-x-hidden selection:bg-val-pink selection:text-white">
@@ -117,15 +137,9 @@
                 <span class="text-lg md:text-2xl font-anton">TAKEN</span>
             </div>
             
-            <!-- Badge 2 -->
-            <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-val-pink text-white flex flex-col items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer">
-                <span class="text-[8px] md:text-[10px] font-bold uppercase tracking-wide">Feb</span>
-                <span class="text-xl md:text-3xl font-anton">14</span>
-            </div>
-            
             <!-- Badge 3: Timer (Widened to Pill Shape) -->
             <div class="h-16 md:h-24 rounded-full bg-val-pink/80 text-white flex flex-col items-center justify-center shadow-lg hover:scale-105 transition-transform cursor-pointer backdrop-blur-sm px-4 md:px-6 min-w-[160px] md:min-w-[200px]">
-                <span class="text-[8px] md:text-[10px] font-bold uppercase tracking-wide mb-1 opacity-80">Since Oct 24, 2023</span>
+                <!-- Removed "Since Oct 24..." span -->
                 <div id="love-timer" class="text-center leading-tight">
                     <!-- Timer will be injected here -->
                     <span class="text-xs md:text-sm font-mono">Calculating...</span>
@@ -144,8 +158,8 @@
                 </div>
             </div>
 
-            <div class="text-[9px] md:text-[10px] max-w-[120px] md:max-w-[200px] leading-tight text-white/80 font-mono text-right">
-                "HOW MUCH LOVE."<br>
+            <div class="text-[9px] md:text-[10px] max-w-[160px] md:max-w-[260px] leading-tight text-white/80 font-mono text-right">
+                "YOU MUST ALLOW ME TO TELL YOU HOW ARDENTLY I ADMIRE AND LOVE YOU."<br>
                 <span class="text-val-pink mt-1 block">SEND GIFT -></span>
             </div>
         </div>
@@ -280,12 +294,22 @@
         <div class="mt-12 md:mt-20 border-t border-val-pink/20 pt-8 md:pt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
             <h2 class="font-anton text-3xl md:text-4xl text-val-pink">BE MINE?</h2>
             <div class="flex gap-4">
-                <a href="#" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors"><i class="fas fa-heart"></i></a>
-                <a href="#" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors"><i class="fas fa-gift"></i></a>
+                <a href="#" id="heart-trigger" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors active:scale-90"><i class="fas fa-heart"></i></a>
+                <a href="#" id="gift-trigger" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors active:scale-90"><i class="fas fa-gift"></i></a>
                 <a href="#" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-val-pink/20 text-val-pink flex items-center justify-center hover:bg-val-pink hover:text-white transition-colors"><i class="fas fa-envelope"></i></a>
             </div>
         </div>
 
+    </div>
+
+    <!-- Hidden Message Modal -->
+    <div id="gift-modal" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modal-backdrop"></div>
+        <div class="bg-white text-val-dark p-8 rounded-3xl max-w-xs text-center transform scale-90 transition-transform duration-300 shadow-2xl border-4 border-val-pink relative mx-4">
+            <i class="fas fa-gift text-4xl text-val-pink mb-4 animate-bounce"></i>
+            <p id="gift-message" class="font-anton text-2xl uppercase leading-tight">You are cute!</p>
+            <p class="text-xs text-gray-500 mt-4 font-mono">Tap anywhere to close</p>
+        </div>
     </div>
 
     <script>
@@ -331,7 +355,86 @@
         setInterval(updateTimer, 1000);
         updateTimer(); // Run immediately
 
-        // --- ANIMATIONS ---
+        // --- HEART EXPLOSION ANIMATION ---
+        document.getElementById('heart-trigger').addEventListener('click', function(e) {
+            e.preventDefault();
+            createHearts();
+        });
+
+        function createHearts() {
+            const container = document.body;
+            // Create 50 hearts
+            for(let i=0; i<50; i++) {
+                const heart = document.createElement('i');
+                heart.classList.add('fas', 'fa-heart', 'floating-heart');
+                heart.style.color = '#FF1E56'; // Ensure color matches theme
+                
+                // Randomize position across the full width
+                heart.style.left = Math.random() * 100 + 'vw';
+                // Start slightly below view
+                heart.style.bottom = '-50px';
+                
+                // Random size variation
+                const size = Math.random() * 20 + 10 + 'px';
+                heart.style.fontSize = size;
+                
+                // Randomize speed and float distance slightly via duration
+                const duration = Math.random() * 3 + 3 + 's';
+                heart.style.animationDuration = duration;
+                
+                // Stagger start times slightly
+                heart.style.animationDelay = Math.random() * 0.5 + 's';
+                
+                container.appendChild(heart);
+                
+                // Cleanup after animation ends
+                setTimeout(() => {
+                    heart.remove();
+                }, parseFloat(duration) * 1000);
+            }
+        }
+
+        // --- GIFT MODAL LOGIC ---
+        const giftMessages = [
+            "You are cute!",
+            "Hey Beautiful!",
+            "I like my coffee same colour as your eyes",
+            "I Love You ❤️",
+            "You make my heart smile",
+            "Best thing that ever happened to me",
+            "You are my favorite notification",
+            "Thinking of you...",
+            "You + Me = Perfect",
+            "Forever & Always"
+        ];
+
+        const giftTrigger = document.getElementById('gift-trigger');
+        const giftModal = document.getElementById('gift-modal');
+        const giftMessage = document.getElementById('gift-message');
+
+        function openGift() {
+            const randomMsg = giftMessages[Math.floor(Math.random() * giftMessages.length)];
+            giftMessage.textContent = randomMsg;
+            giftModal.classList.remove('opacity-0', 'pointer-events-none');
+            giftModal.querySelector('div.bg-white').classList.remove('scale-90');
+            giftModal.querySelector('div.bg-white').classList.add('scale-100');
+        }
+
+        function closeGift() {
+            giftModal.classList.add('opacity-0', 'pointer-events-none');
+            giftModal.querySelector('div.bg-white').classList.add('scale-90');
+            giftModal.querySelector('div.bg-white').classList.remove('scale-100');
+        }
+
+        giftTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            openGift();
+        });
+
+        // Close when clicking anywhere on the modal
+        giftModal.addEventListener('click', closeGift);
+
+        // --- SCROLL ANIMATIONS ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
