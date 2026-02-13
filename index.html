@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeaweedBrain | Home</title>
+    <style>
+        /* --- CSS STYLES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            position: sticky; /* Keeps nav at top when scrolling */
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            padding-left: 20px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding-right: 20px;
+        }
+
+        .nav-links li {
+            display: inline;
+            margin-left: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #ffcc00; /* Yellow on hover */
+        }
+
+        /* Hero Section (The Big Intro) */
+        .hero {
+            background-color: #e0e0e0;
+            height: 60vh; /* 60% of screen height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 800px;
+            margin: 40px auto; /* Centers the box */
+            padding: 0 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">SeaweedBrain</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <h1>Welcome to My Site</h1>
+        <p>This is a professional-style layout hosted for free.</p>
+    </div>
+
+    <div class="container">
+        <h2>About This Project</h2>
+        <p>
+            This website is hosted on GitHub Pages. You can edit the text in the 
+            <code>index.html</code> file to say whatever you want. Because the file is named index, 
+            you don't need to type the filename in the URL.
+        </p>
+        <br>
+        <h3>How it Works</h3>
+        <p>
+            The navigation bar above is "sticky," meaning it stays at the top even if you add 
+            lots of text here and scroll down.
+        </p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Jayansh Dave. Built on GitHub.</p>
+    </footer>
+
+</body>
+</html>
